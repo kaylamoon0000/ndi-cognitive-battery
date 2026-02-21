@@ -1,8 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Memory Training</title>
+<title>Visual Memory Training</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px;
+ margin:20px 0;
+}
+
+.item{
+ background:#1abc9c;
+ height:80px;
+ border-radius:10px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:30px;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.item.selected{
+ background:#e94560;
+}
+
+</style>
 </head>
 
 <body>
@@ -17,79 +44,134 @@
 
 <div class="card">
 
-<h1>Memory Training 🧠</h1>
+<h1>Visual Memory 🧠</h1>
 
 <div id="game"></div>
 
-<button id="startBtn" onclick="startGame()">
-Start Game
+<button onclick="startRound()" id="startBtn">
+Start Round
 </button>
 
 </div>
 
 <script>
 
-let sequence;
 let ndi=Number(localStorage.getItem("ndiScore"))||50;
 
-function getLength(){
+let round=0;
+let originalSet=[];
+let missingSet=[];
+let selected=[];
 
- let base =
-  ndi<40 ? 3 :
-  ndi<70 ? 4 : 6;
+const symbols=["⭐","🔺","⬛","🟢","💠","❤️","⚡","🌙","☀️","🔥"];
 
- return base + Math.floor(Math.random()*2);
+function getDifficulty(){
+
+ if(ndi<40) return 5 + Math.floor(round/2);
+ if(ndi<70) return 7 + Math.floor(round/2);
+ return 10 + Math.floor(round/1.5);
 
 }
 
-function startGame(){
+function startRound(){
 
  document.getElementById("startBtn").style.display="none";
 
- let len=getLength();
+ let count=getDifficulty();
 
- sequence=Array.from(
-  {length:len},
-  ()=>Math.floor(Math.random()*9)
- );
+ originalSet=[];
+ for(let i=0;i<count;i++){
+   originalSet.push(
+     symbols[Math.floor(Math.random()*symbols.length)]
+   );
+ }
 
- document.getElementById("game").innerHTML=
- `<h2>${sequence.join(" ")}</h2>
- <p>Memorize...</p>`;
+ // Create altered version with 2 removals
+ missingSet=[...originalSet];
 
- setTimeout(showInput,3000);
+ if(missingSet.length>2){
+   missingSet.splice(
+     Math.floor(Math.random()*missingSet.length),1
+   );
+
+   missingSet.splice(
+     Math.floor(Math.random()*missingSet.length),1
+   );
+ }
+
+ showGrid(originalSet,"Memorize these objects");
+
+ setTimeout(()=>{
+   showGrid(missingSet,"Select removed objects",true);
+ },3000);
 
 }
 
-function showInput(){
+function showGrid(items,message,interactive=false){
 
- document.getElementById("game").innerHTML=`
- <p>Enter sequence</p>
- <input id="ans">
- <br><br>
- <button onclick="check()">Submit</button>
- `;
+ let html=`<h3>${message}</h3>`;
+
+ html+=`<div class="grid">`;
+
+ items.forEach(item=>{
+   html+=`
+   <div class="item"
+   onclick="selectItem(this,'${item}',${interactive})">
+   ${item}
+   </div>
+   `;
+ });
+
+ html+="</div>";
+
+ if(interactive){
+   html+=`
+   <button onclick="checkAnswers()">
+   Submit Answers
+   </button>
+   `;
+ }
+
+ document.getElementById("game").innerHTML=html;
+
+ selected=[];
+}
+
+function selectItem(el,item,interactive){
+
+ if(!interactive) return;
+
+ el.classList.toggle("selected");
+
+ if(selected.includes(item)){
+   selected=selected.filter(x=>x!==item);
+ }else{
+   selected.push(item);
+ }
 
 }
 
-function check(){
+function checkAnswers(){
 
- let input=document.getElementById("ans").value
- .split("")
- .map(Number);
+ let removed=[];
+
+ originalSet.forEach(x=>{
+   if(!missingSet.includes(x)) removed.push(x);
+ });
 
  let correct=0;
 
- for(let i=0;i<sequence.length;i++){
-  if(sequence[i]===input[i]) correct++;
- }
+ selected.forEach(x=>{
+   if(removed.includes(x)) correct++;
+ });
 
- alert("Score: "+correct+"/"+sequence.length);
+ alert("You found "+correct+" correct removals!");
 
- // Round finished → show start button again
+ round++;
+
  document.getElementById("startBtn").style.display="inline-block";
-
  document.getElementById("game").innerHTML="";
+
 }
 
 </script>
