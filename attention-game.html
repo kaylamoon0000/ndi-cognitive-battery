@@ -1,52 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Attention Game</title>
+<title>Attention Training</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<div class="nav">
+<a href="index.html">Home Test</a>
+<a href="memory-game.html">Memory</a>
+<a href="attention-game.html">Attention</a>
+<a href="processing-game.html">Processing</a>
+<a href="logic-game.html">Logic</a>
+</div>
+
 <div class="card">
-<h1>Attention Game 👁️</h1>
-
-<p>Click the button ONLY when it turns green.</p>
-
-<button id="btn" onclick="clickBtn()">Waiting...</button>
+<h1>Attention Training 👁️</h1>
+<button id="btn" onclick="clickBtn()">Wait...</button>
 </div>
 
 <script>
 
-let startTime;
-let waiting=false;
+let reactionStart;
 
-const btn=document.getElementById("btn");
+function nextRound(){
 
-function startRound(){
+ let wait=1500+Math.random()*1500;
+
+ let btn=document.getElementById("btn");
+
  btn.innerText="Wait...";
- waiting=true;
 
  setTimeout(()=>{
-   btn.style.background="#2ecc71";
-   btn.innerText="CLICK!";
-   startTime=performance.now();
- },Math.random()*3000+2000);
+
+  btn.style.background="#2ecc71";
+  btn.innerText="CLICK!";
+
+  reactionStart=performance.now();
+
+ },wait);
+
 }
 
 function clickBtn(){
- if(!waiting) return;
 
- let reaction=performance.now()-startTime;
+ if(!reactionStart) return;
 
- alert("Reaction: "+Math.floor(reaction)+" ms");
+ let rt=performance.now()-reactionStart;
 
- btn.style.background="#e94560";
- waiting=false;
+ alert("Reaction: "+Math.floor(rt)+" ms");
 
- setTimeout(startRound,1500);
+ reactionStart=null;
+
+ document.getElementById("btn").style.background="#e94560";
+
+ nextRound();
+
 }
 
-startRound();
+nextRound();
 
 </script>
 
