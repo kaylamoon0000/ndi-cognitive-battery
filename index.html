@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NDI Cognitive Battery</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(135deg, #1b1b2f, #162447);
+  color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.card {
+  background: #0f3460;
+  border-radius: 16px;
+  padding: 40px;
+  width: 600px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  text-align: center;
+}
+button {
+  margin-top: 24px;
+  font-size: 18px;
+  padding: 14px 32px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #e94560;
+  color: white;
+}
+button:hover { background: #ff5c77; }
+input {
+  font-size: 20px;
+  padding: 10px;
+  width: 80%;
+  border-radius: 8px;
+  border: none;
+  margin-top: 16px;
+  text-align: center;
+}
+.timer { font-size: 16px; opacity: 0.85; }
+.big { font-size: 34px; font-weight: bold; }
+</style>
+</head>
+
+<body>
+<div class="card" id="card"></div>
+
+<script>
+const card = document.getElementById("card");
+
+function avg(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    let j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+}
+
+let phrases = [
+  "working memory capacity",
+  "reaction time assessment",
+  "neural signal transmission",
+  "cognitive processing speed",
+  "executive function control",
+  "information processing rate",
+  "attention switching cost",
+  "decision making latency",
+  "sensorimotor coordination",
+  "neural efficiency measure",
+  "visual attention stability",
+  "task switching performance",
+  "motor planning execution",
+  "short term memory load",
+  "cognitive control systems",
+  "adaptive neural response"
+];
+
+shuffle(phrases);
+let phraseIndex = 0;
+function nextPhrase(){
+  if(phraseIndex >= phrases.length){
+    shuffle(phrases);
+    phraseIndex = 0;
+  }
+  return phrases[phraseIndex++];
+}
+
+let typingWPM = [];
+let reactionTimes = [];
+let memoryAccuracy = [];
+
+function home(){
+  card.innerHTML = `
+    <h1>Neurocognitive Assessment 🧠</h1>
+    <p>Measures typing speed, reaction time, and working memory.<br>~3 minutes • Non-diagnostic</p>
+    <button onclick="typingIntro()">Start</button>
+  `;
+}
+
+function typingIntro(){
+  card.innerHTML = `
+    <h1>Typing Task</h1>
+    <p>Type the phrase and press Enter.<br>Duration: 30 seconds</p>
+    <button onclick="startTyping()">Begin</button>
+  `;
+}
+
+let typed="", phrase, phraseStart, typingStart, typingTimer;
+
+function startTyping(){
+  typingWPM=[];
+  typed="";
+  phrase = nextPhrase();
+  phraseStart = performance.now();
+  typingStart = performance.now();
+  document.addEventListener("keydown",typingKey);
+  typingTimer = setInterval(updateTyping,100);
+}
+
+function updateTyping(){
+  let elapsed=(performance.now()-typingStart)/1000;
+  if(elapsed>=30){
+    clearInterval(typingTimer);
+    document.removeEventListener("keydown",typingKey);
+    showResults();
+    return;
+  }
+  card.innerHTML = `
+    <div class="timer">${Math.ceil(30-elapsed)}s</div>
+    <div class="big">${phrase}</div>
+    <p>${typed}</p>
+  `;
+}
+
+function typingKey(e){
+  if(e.key==="Enter"){
+    let t=(performance.now()-phraseStart)/1000;
+    typingWPM.push((phrase.split(" ").length/t)*60);
+    typed="";
+    phrase=nextPhrase();
+    phraseStart=performance.now();
+  } else if(e.key==="Backspace"){
+    typed=typed.slice(0,-1);
+  } else if(e.key.length===1){
+    typed+=e.key;
+  }
+}
+
+function showResults(){
+  let avgWPM=avg(typingWPM);
+  let ndi=Math.min(Math.abs(avgWPM-45)/65,1)*100;
+
+  card.innerHTML=`
+    <h1>Results</h1>
+    <p><b>NDI: ${ndi.toFixed(1)} / 100</b></p>
+    <p>Typing: ${avgWPM.toFixed(1)} WPM</p>
+    <p style="opacity:.8">Lower = closer to expected baseline</p>
+  `;
+}
+
+home();
+</script>
+
+</body>
+</html>
