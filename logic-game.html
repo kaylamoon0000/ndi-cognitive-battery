@@ -1,34 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Logic Game</title>
+<title>Logic Training</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<div class="nav">
+<a href="index.html">Home Test</a>
+<a href="memory-game.html">Memory</a>
+<a href="attention-game.html">Attention</a>
+<a href="processing-game.html">Processing</a>
+<a href="logic-game.html">Logic</a>
+</div>
+
 <div class="card">
-<h1>Logic Game 🧩</h1>
+<h1>Logic Training 🧩</h1>
 
-<p>Solve: 5 + 3 × 2 = ?</p>
+<div id="question"></div>
 
-<input id="ans">
-<button onclick="check()">Submit</button>
+<input id="ans" placeholder="Answer">
+<br><br>
+<button onclick="submitAnswer()">Submit</button>
 
-<p id="result"></p>
+<p id="feedback"></p>
 </div>
 
 <script>
 
-function check(){
- let val=document.getElementById("ans").value;
+let answer;
+let round=0;
 
- if(val==="11"){
-   document.getElementById("result").innerText="Correct!";
- } else {
-   document.getElementById("result").innerText="Try again!";
+function generateQuestion(){
+
+ let difficulty =
+  round<5 ? 1 :
+  round<12 ? 2 : 3;
+
+ let a=Math.floor(Math.random()*10*difficulty);
+ let b=Math.floor(Math.random()*10*difficulty);
+
+ if(difficulty===1){
+   answer=a+b;
+   document.getElementById("question").innerText=
+   `${a} + ${b} = ?`;
  }
+
+ else if(difficulty===2){
+   answer=a-b;
+   document.getElementById("question").innerText=
+   `${a} - ${b} = ?`;
+ }
+
+ else{
+   let c=Math.floor(Math.random()*10);
+   answer=a+b*c;
+   document.getElementById("question").innerText=
+   `${a} + ${b} × ${c} = ?`;
+ }
+
 }
+
+function submitAnswer(){
+
+ let val=Number(document.getElementById("ans").value);
+
+ if(val===answer){
+   document.getElementById("feedback").innerText="Correct!";
+   round++;
+ }else{
+   document.getElementById("feedback").innerText="Try again!";
+ }
+
+ document.getElementById("ans").value="";
+ generateQuestion();
+
+}
+
+generateQuestion();
 
 </script>
 
