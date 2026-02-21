@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Up</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ height:100vh;
+ background:linear-gradient(135deg,#0f172a,#020617);
+ color:white;
+}
+
+.card{
+ padding:60px;
+ border-radius:24px;
+ background:rgba(255,255,255,.05);
+ backdrop-filter:blur(30px);
+ text-align:center;
+}
+
+input{
+ padding:14px;
+ width:300px;
+ margin:12px;
+ border-radius:10px;
+ border:none;
+ text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Create Account</h1>
+
+<input id="username" placeholder="Username">
+<br>
+<input id="password" type="password" placeholder="Password">
+<br>
+
+<button onclick="signup()">Create Account</button>
+
+<p>
+Already have account?
+<a href="login.html">Login</a>
+</p>
+
+</div>
+
+<script>
+
+function signup(){
+
+ let username=document.getElementById("username").value;
+ let password=document.getElementById("password").value;
+
+ if(!username || !password){
+  alert("Fill all fields");
+  return;
+ }
+
+ let users=JSON.parse(localStorage.getItem("users")||"{}");
+
+ if(users[username]){
+  alert("User already exists");
+  return;
+ }
+
+ users[username]=password;
+
+ localStorage.setItem("users",JSON.stringify(users));
+
+ alert("Account created!");
+
+ window.location.href="login.html";
+}
+
+</script>
+
+</body>
+</html>
