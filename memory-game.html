@@ -56,120 +56,144 @@ Start Trial
 
 <script>
 
+/* ---------- STATE ---------- */
+
 let ndi=Number(localStorage.getItem("ndiScore"))||50;
 let round=0;
 
-let originalObjects=[];
-let trialObjects=[];
-let changedIndices=[];
-let selections=new Set();
+let originalScene=[];
+let testScene=[];
+let changedObjectIDs=[];
+let userSelections=new Set();
+
+/* ---------- SYMBOL BANK ---------- */
 
 const symbols=[
 "🐶","🐱","🦊","🦁","🐸","🐵","🐼","🐨",
 "🍎","🍌","🍓","🍇","⚽","🏀","🎲","🎯",
-"🚗","✈️","🚀","🏆","🎮","📱"
+"🚗","✈️","🚀","🏆","🎮","📱","💡","🔬"
 ];
+
+/* ---------- DIFFICULTY ---------- */
 
 function getDifficulty(){
 
  if(ndi<40) return 6 + Math.floor(round/2);
- if(ndi<70) return 8 + Math.floor(round/1.8);
- return 12 + Math.floor(round/1.5);
+ if(ndi<70) return 8 + Math.floor(round/1.5);
+ return 12 + Math.floor(round/1.2);
 
 }
+
+/* ---------- GAME FLOW ---------- */
 
 function startTrial(){
 
  document.getElementById("startBtn").style.display="none";
 
  let size=getDifficulty();
+ let changeCount=2 + Math.floor(round/3);
 
- // Generate original scene
- originalObjects=Array.from(
-  {length:size},
-  ()=>randomSymbol()
- );
+ /* Create objects with unique IDs */
+ originalScene=Array.from({length:size},(_,i)=>({
+   id:i,
+   symbol:randomSymbol()
+ }));
 
- showScene(originalObjects,"Memorize this scene");
+ /* Create test scene (copy + change objects) */
+ testScene=originalScene.map(obj=>({...obj}));
 
- // Show test scene after delay
- setTimeout(()=>{
-   generateTestScene();
- },3000);
+ changedObjectIDs=[];
 
-}
-
-function generateTestScene(){
-
- let size=originalObjects.length;
-
- trialObjects=[...originalObjects];
-
- let changeCount = 2 + Math.floor(round/3);
- changedIndices=[];
-
- // Change random objects
  for(let i=0;i<changeCount;i++){
 
-   let pos=Math.floor(Math.random()*size);
+   let index=Math.floor(Math.random()*size);
 
-   if(!changedIndices.includes(pos)){
-     trialObjects[pos]=randomSymbolDifferent(trialObjects[pos]);
-     changedIndices.push(pos);
+   if(!changedObjectIDs.includes(index)){
+     testScene[index].symbol =
+     randomSymbolDifferent(testScene[index].symbol);
+
+     changedObjectIDs.push(index);
    }
 
  }
 
- shuffleArray(trialObjects);
-
+ /* Show memory scene */
  showScene(
-   trialObjects,
-   `Select the changed objects<br>
-   ${changeCount} objects changed`,
-   true
+   originalScene.map(o=>o.symbol),
+   "Memorize this scene"
  );
+
+ /* Show test scene after delay */
+ setTimeout(()=>{
+   showInteractiveScene(changeCount);
+ },3000);
 
 }
 
-function showScene(list,message,interactive=false){
+/* ---------- RENDER ---------- */
+
+function showScene(list,message){
 
  let html=`<h3>${message}</h3>`;
-
  html+=`<div class="grid">`;
 
- list.forEach((item,index)=>{
+ list.forEach(symbol=>{
    html+=`
-   <div class="cell"
-   onclick="toggleSelect(${index},this)">
-   ${item}
+   <div class="cell">
+   ${symbol}
    </div>
    `;
  });
 
  html+="</div>";
 
- if(interactive){
+ document.getElementById("game").innerHTML=html;
+
+ userSelections=new Set();
+
+}
+
+function showInteractiveScene(changeCount){
+
+ shuffleArray(testScene);
+
+ let html=`
+ <h3>Select the ${changeCount} changed objects</h3>
+ <div class="grid">
+ `;
+
+ testScene.forEach((obj,idx)=>{
+
    html+=`
-   <button onclick="checkAnswers()">
-   Submit Answers
-   </button>
+   <div class="cell"
+   onclick="toggleSelect(${idx},this)">
+   ${obj.symbol}
+   </div>
    `;
- }
+
+ });
+
+ html+=`
+ </div>
+ <button onclick="checkAnswers()">
+ Submit Answers
+ </button>
+ `;
 
  document.getElementById("game").innerHTML=html;
 
- selections=new Set();
-
 }
+
+/* ---------- INPUT ---------- */
 
 function toggleSelect(index,el){
 
  if(el.classList.contains("selected")){
    el.classList.remove("selected");
-   selections.delete(index);
+   userSelections.delete(index);
  }else{
    el.classList.add("selected");
-   selections.add(index);
+   userSelections.add(index);
  }
 
 }
@@ -178,14 +202,18 @@ function checkAnswers(){
 
  let correct=0;
 
- changedIndices.forEach(i=>{
-   if(selections.has(i)) correct++;
+ changedObjectIDs.forEach(id=>{
+   let testObj=testScene[id];
+
+   if(!originalScene.some(o=>o.symbol===testObj.symbol)){
+     if(userSelections.has(id)) correct++;
+   }
  });
 
  alert(
  "You found "+correct+
- " / "+changedIndices.length+
- " changed objects"
+ " / "+changedObjectIDs.length+
+ " correct changes"
  );
 
  round++;
@@ -194,6 +222,8 @@ function checkAnswers(){
  document.getElementById("game").innerHTML="";
 
 }
+
+/* ---------- UTIL ---------- */
 
 function randomSymbol(){
  return symbols[Math.floor(Math.random()*symbols.length)];
