@@ -14,13 +14,13 @@
 }
 
 .cell{
- background:#1abc9c;
  height:80px;
- border-radius:10px;
+ background:#1abc9c;
+ border-radius:12px;
+ font-size:30px;
  display:flex;
  align-items:center;
  justify-content:center;
- font-size:30px;
  cursor:pointer;
  transition:.2s;
 }
@@ -59,17 +59,22 @@ Start Round
 let ndi=Number(localStorage.getItem("ndiScore"))||50;
 
 let round=0;
-let originalGrid=[];
-let removedIndices=[];
+
+let originalScene=[];
+let newScene=[];
+let addedIndices=[];
 let userSelections=new Set();
 
-const symbols=["⭐","🔺","⬛","🟢","💠","❤️","⚡","🌙","☀️","🔥"];
+const symbols=[
+"🐶","🐱","🦊","🦁","🐸","🐵","🐼","🐨",
+"🍎","🍌","🍓","🍇","⚽","🏀","🎲","🎯"
+];
 
-function getGridSize(){
+function getDifficultySize(){
 
- if(ndi<40) return 6;
- if(ndi<70) return 8;
- return 12;
+ if(ndi<40) return 6 + Math.floor(round/2);
+ if(ndi<70) return 8 + Math.floor(round/2);
+ return 10 + Math.floor(round/1.5);
 
 }
 
@@ -77,47 +82,63 @@ function startRound(){
 
  document.getElementById("startBtn").style.display="none";
 
- let size=getGridSize();
+ let size=getDifficultySize();
 
- // Generate original grid
- originalGrid=[];
- for(let i=0;i<size;i++){
-   originalGrid.push(
-     symbols[Math.floor(Math.random()*symbols.length)]
-   );
- }
+ // Generate random scene
+ originalScene=Array.from({length:size},()=>randomSymbol());
 
- // Pick random positions to remove (2 removals minimum)
- removedIndices=[];
- let removalCount=2;
+ // Copy scene then add new objects
+ newScene=[...originalScene];
 
- while(removedIndices.length<removalCount){
-   let r=Math.floor(Math.random()*size);
-   if(!removedIndices.includes(r)){
-     removedIndices.push(r);
+ let addCount=2;
+
+ addedIndices=[];
+
+ while(addedIndices.length<addCount){
+
+   let pos=Math.floor(Math.random()*newScene.length);
+
+   if(!addedIndices.includes(pos)){
+     newScene[pos]=randomSymbolDifferent(originalScene[pos]);
+     addedIndices.push(pos);
    }
+
  }
 
- showGrid(originalGrid,"Memorize the objects");
+ showScene(originalScene,"Memorize this scene");
 
  setTimeout(()=>{
-   showChangedGrid();
+   showScene(newScene,"Select NEW objects",true);
  },3000);
 
 }
 
-function showGrid(grid,message,interactive=false){
+function randomSymbol(){
+ return symbols[Math.floor(Math.random()*symbols.length)];
+}
+
+function randomSymbolDifferent(old){
+ let s=randomSymbol();
+ while(s===old){
+   s=randomSymbol();
+ }
+ return s;
+}
+
+function showScene(scene,message,interactive=false){
 
  let html=`<h3>${message}</h3>`;
  html+=`<div class="grid">`;
 
- grid.forEach((item,index)=>{
+ scene.forEach((item,index)=>{
+
    html+=`
    <div class="cell"
    onclick="toggleSelect(${index},this)">
    ${item}
    </div>
    `;
+
  });
 
  html+="</div>";
@@ -136,27 +157,14 @@ function showGrid(grid,message,interactive=false){
 
 }
 
-function showChangedGrid(){
-
- // Create copy with removals
- let newGrid=[...originalGrid];
-
- removedIndices.forEach(i=>{
-   newGrid[i]="❌";
- });
-
- showGrid(newGrid,"Select removed objects",true);
-
-}
-
 function toggleSelect(index,el){
 
- if(!el.classList.contains("selected")){
-   el.classList.add("selected");
-   userSelections.add(index);
- }else{
+ if(el.classList.contains("selected")){
    el.classList.remove("selected");
    userSelections.delete(index);
+ }else{
+   el.classList.add("selected");
+   userSelections.add(index);
  }
 
 }
@@ -165,14 +173,14 @@ function checkAnswers(){
 
  let correct=0;
 
- removedIndices.forEach(i=>{
+ addedIndices.forEach(i=>{
    if(userSelections.has(i)) correct++;
  });
 
  alert(
-   "You found "+correct+
-   " / "+removedIndices.length+
-   " removed objects"
+ "You found "+correct+
+ " / "+addedIndices.length+
+ " new objects"
  );
 
  round++;
