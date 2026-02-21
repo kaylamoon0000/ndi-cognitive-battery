@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Logic Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<div class="card">
+<h1>Logic Game 🧩</h1>
+
+<p>Solve: 5 + 3 × 2 = ?</p>
+
+<input id="ans">
+<button onclick="check()">Submit</button>
+
+<p id="result"></p>
+</div>
+
+<script>
+
+function check(){
+ let val=document.getElementById("ans").value;
+
+ if(val==="11"){
+   document.getElementById("result").innerText="Correct!";
+ } else {
+   document.getElementById("result").innerText="Try again!";
+ }
+}
+
+</script>
+
+</body>
+</html>
