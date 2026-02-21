@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ height:100vh;
+ background:linear-gradient(135deg,#0f172a,#020617);
+ color:white;
+}
+
+.card{
+ padding:60px;
+ border-radius:24px;
+ background:rgba(255,255,255,.05);
+ backdrop-filter:blur(30px);
+ text-align:center;
+}
+
+input{
+ padding:14px;
+ width:300px;
+ margin:12px;
+ border-radius:10px;
+ border:none;
+ text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Login</h1>
+
+<input id="username" placeholder="Username">
+<br>
+<input id="password" type="password" placeholder="Password">
+<br>
+
+<button onclick="login()">Login</button>
+
+<p>
+Need account?
+<a href="signup.html">Sign Up</a>
+</p>
+
+</div>
+
+<script>
+
+function login(){
+
+ let username=document.getElementById("username").value;
+ let password=document.getElementById("password").value;
+
+ let users=JSON.parse(localStorage.getItem("users")||"{}");
+
+ if(users[username] && users[username]===password){
+
+  localStorage.setItem("currentUser",username);
+
+  window.location.href="index.html";
+
+ }else{
+  alert("Invalid credentials");
+ }
+
+}
+
+</script>
+
+</body>
+</html>
