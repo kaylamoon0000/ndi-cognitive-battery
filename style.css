@@ -3,7 +3,6 @@ body{
  font-family:system-ui,sans-serif;
  background:linear-gradient(135deg,#0f172a,#020617);
  color:white;
- min-height:100vh;
 }
 
 /* NAVBAR */
@@ -15,11 +14,9 @@ body{
  background:rgba(2,6,23,0.9);
  backdrop-filter:blur(20px);
  padding:18px;
-
  display:flex;
  justify-content:center;
  gap:35px;
-
  z-index:1000;
 }
 
@@ -27,20 +24,14 @@ body{
  color:white;
  text-decoration:none;
  font-weight:600;
- transition:.3s;
 }
 
-.navbar a:hover{
- color:#38bdf8;
-}
-
-/* CARD LAYOUT */
+/* CARD */
 
 .card{
- width:800px;
- max-width:92%;
+ width:700px;
+ max-width:90%;
  margin:120px auto;
-
  padding:50px;
 
  border-radius:24px;
@@ -48,54 +39,35 @@ body{
  background:rgba(255,255,255,0.05);
  backdrop-filter:blur(30px);
 
+ text-align:center;
+
  box-shadow:
  0 40px 80px rgba(0,0,0,.6);
-
- text-align:center;
 }
 
-/* BUTTONS */
+/* BUTTON */
 
 button{
- margin-top:24px;
-
- padding:15px 35px;
-
+ margin-top:20px;
+ padding:14px 32px;
  border:none;
- border-radius:14px;
-
+ border-radius:12px;
  font-size:18px;
- font-weight:600;
-
  background:linear-gradient(90deg,#e94560,#ff758c);
  color:white;
-
  cursor:pointer;
- transition:.3s;
-}
-
-button:hover{
- transform:translateY(-3px);
- box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
 
 /* INPUT */
 
 input{
- margin-top:20px;
-
  padding:14px;
-
  width:80%;
-
- border-radius:14px;
+ border-radius:10px;
  border:none;
-
  font-size:18px;
-
  text-align:center;
-
- background:rgba(255,255,255,0.07);
+ background:rgba(255,255,255,.08);
  color:white;
 }
 
