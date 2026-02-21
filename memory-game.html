@@ -16,28 +16,49 @@
 </div>
 
 <div class="card">
+
 <h1>Memory Training 🧠</h1>
+
 <div id="game"></div>
+
+<button id="startBtn" onclick="startGame()">
+Start Game
+</button>
+
 </div>
 
 <script>
 
+let sequence;
 let ndi=Number(localStorage.getItem("ndiScore"))||50;
 
-let sequence;
+function getLength(){
 
-function startRound(){
+ let base =
+  ndi<40 ? 3 :
+  ndi<70 ? 4 : 6;
 
- let base = ndi<40?3: ndi<70?4:6;
- let length = base + Math.floor(Math.random()*3);
+ return base + Math.floor(Math.random()*2);
 
- sequence=Array.from({length},
- ()=>Math.floor(Math.random()*9));
+}
+
+function startGame(){
+
+ document.getElementById("startBtn").style.display="none";
+
+ let len=getLength();
+
+ sequence=Array.from(
+  {length:len},
+  ()=>Math.floor(Math.random()*9)
+ );
 
  document.getElementById("game").innerHTML=
- `<h2>${sequence.join(" ")}</h2>`;
+ `<h2>${sequence.join(" ")}</h2>
+ <p>Memorize...</p>`;
 
  setTimeout(showInput,3000);
+
 }
 
 function showInput(){
@@ -53,21 +74,23 @@ function showInput(){
 
 function check(){
 
- let input=document.getElementById("ans").value.split("").map(Number);
+ let input=document.getElementById("ans").value
+ .split("")
+ .map(Number);
 
  let correct=0;
 
  for(let i=0;i<sequence.length;i++){
-  if(sequence[i]==input[i]) correct++;
+  if(sequence[i]===input[i]) correct++;
  }
 
  alert("Score: "+correct+"/"+sequence.length);
 
- startRound();
+ // Round finished → show start button again
+ document.getElementById("startBtn").style.display="inline-block";
 
+ document.getElementById("game").innerHTML="";
 }
-
-startRound();
 
 </script>
 
