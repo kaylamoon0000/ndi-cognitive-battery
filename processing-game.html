@@ -1,1 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Processing Speed</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<div class="card">
+<h1>Processing Speed ⚡</h1>
+
+<p>Type the word as fast as possible.</p>
+
+<h2 id="word"></h2>
+
+<input id="input">
+
+<p id="timer"></p>
+</div>
+
+<script>
+
+let words=["brain","neuron","speed","cortex","focus"];
+let start;
+
+function newWord(){
+ document.getElementById("word").innerText =
+ words[Math.floor(Math.random()*words.length)];
+
+ start=performance.now();
+}
+
+document.getElementById("input").addEventListener("keyup",e=>{
+ if(e.key==="Enter"){
+   let time=(performance.now()-start)/1000;
+
+   alert("Time: "+time.toFixed(2)+" seconds");
+
+   e.target.value="";
+   newWord();
+ }
+});
+
+newWord();
+
+</script>
+
+</body>
+</html>
