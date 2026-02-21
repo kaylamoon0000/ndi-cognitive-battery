@@ -13,7 +13,7 @@
  margin:20px 0;
 }
 
-.item{
+.cell{
  background:#1abc9c;
  height:80px;
  border-radius:10px;
@@ -25,7 +25,7 @@
  transition:.2s;
 }
 
-.item.selected{
+.cell.selected{
  background:#e94560;
 }
 
@@ -48,7 +48,7 @@
 
 <div id="game"></div>
 
-<button onclick="startRound()" id="startBtn">
+<button id="startBtn" onclick="startRound()">
 Start Round
 </button>
 
@@ -59,17 +59,17 @@ Start Round
 let ndi=Number(localStorage.getItem("ndiScore"))||50;
 
 let round=0;
-let originalSet=[];
-let missingSet=[];
-let selected=[];
+let originalGrid=[];
+let removedIndices=[];
+let userSelections=new Set();
 
 const symbols=["⭐","🔺","⬛","🟢","💠","❤️","⚡","🌙","☀️","🔥"];
 
-function getDifficulty(){
+function getGridSize(){
 
- if(ndi<40) return 5 + Math.floor(round/2);
- if(ndi<70) return 7 + Math.floor(round/2);
- return 10 + Math.floor(round/1.5);
+ if(ndi<40) return 6;
+ if(ndi<70) return 8;
+ return 12;
 
 }
 
@@ -77,46 +77,44 @@ function startRound(){
 
  document.getElementById("startBtn").style.display="none";
 
- let count=getDifficulty();
+ let size=getGridSize();
 
- originalSet=[];
- for(let i=0;i<count;i++){
-   originalSet.push(
+ // Generate original grid
+ originalGrid=[];
+ for(let i=0;i<size;i++){
+   originalGrid.push(
      symbols[Math.floor(Math.random()*symbols.length)]
    );
  }
 
- // Create altered version with 2 removals
- missingSet=[...originalSet];
+ // Pick random positions to remove (2 removals minimum)
+ removedIndices=[];
+ let removalCount=2;
 
- if(missingSet.length>2){
-   missingSet.splice(
-     Math.floor(Math.random()*missingSet.length),1
-   );
-
-   missingSet.splice(
-     Math.floor(Math.random()*missingSet.length),1
-   );
+ while(removedIndices.length<removalCount){
+   let r=Math.floor(Math.random()*size);
+   if(!removedIndices.includes(r)){
+     removedIndices.push(r);
+   }
  }
 
- showGrid(originalSet,"Memorize these objects");
+ showGrid(originalGrid,"Memorize the objects");
 
  setTimeout(()=>{
-   showGrid(missingSet,"Select removed objects",true);
+   showChangedGrid();
  },3000);
 
 }
 
-function showGrid(items,message,interactive=false){
+function showGrid(grid,message,interactive=false){
 
  let html=`<h3>${message}</h3>`;
-
  html+=`<div class="grid">`;
 
- items.forEach(item=>{
+ grid.forEach((item,index)=>{
    html+=`
-   <div class="item"
-   onclick="selectItem(this,'${item}',${interactive})">
+   <div class="cell"
+   onclick="toggleSelect(${index},this)">
    ${item}
    </div>
    `;
@@ -134,38 +132,48 @@ function showGrid(items,message,interactive=false){
 
  document.getElementById("game").innerHTML=html;
 
- selected=[];
+ userSelections=new Set();
+
 }
 
-function selectItem(el,item,interactive){
+function showChangedGrid(){
 
- if(!interactive) return;
+ // Create copy with removals
+ let newGrid=[...originalGrid];
 
- el.classList.toggle("selected");
+ removedIndices.forEach(i=>{
+   newGrid[i]="❌";
+ });
 
- if(selected.includes(item)){
-   selected=selected.filter(x=>x!==item);
+ showGrid(newGrid,"Select removed objects",true);
+
+}
+
+function toggleSelect(index,el){
+
+ if(!el.classList.contains("selected")){
+   el.classList.add("selected");
+   userSelections.add(index);
  }else{
-   selected.push(item);
+   el.classList.remove("selected");
+   userSelections.delete(index);
  }
 
 }
 
 function checkAnswers(){
 
- let removed=[];
-
- originalSet.forEach(x=>{
-   if(!missingSet.includes(x)) removed.push(x);
- });
-
  let correct=0;
 
- selected.forEach(x=>{
-   if(removed.includes(x)) correct++;
+ removedIndices.forEach(i=>{
+   if(userSelections.has(i)) correct++;
  });
 
- alert("You found "+correct+" correct removals!");
+ alert(
+   "You found "+correct+
+   " / "+removedIndices.length+
+   " removed objects"
+ );
 
  round++;
 
