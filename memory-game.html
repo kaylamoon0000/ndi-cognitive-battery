@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Memory Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<div class="card">
+<h1>Memory Game 🧠</h1>
+<p>Memorize the sequence of numbers.</p>
+
+<div id="game"></div>
+
+<button onclick="startGame()">Start Game</button>
+</div>
+
+<script>
+
+let sequence;
+
+function startGame(){
+ sequence = Array.from(
+   {length:4},
+   ()=>Math.floor(Math.random()*9)
+ );
+
+ document.getElementById("game").innerHTML =
+ "<h2>"+sequence.join(" ")+"</h2>";
+
+ setTimeout(()=>{
+   document.getElementById("game").innerHTML = `
+   <input id="answer">
+   <button onclick="check()">Submit</button>
+   `;
+ },3000);
+}
+
+function check(){
+ let input = document.getElementById("answer").value
+   .split("")
+   .map(Number);
+
+ let correct = 0;
+
+ for(let i=0;i<sequence.length;i++){
+   if(sequence[i]===input[i]) correct++;
+ }
+
+ alert("Score: "+correct+"/"+sequence.length);
+}
+
+</script>
+
+</body>
+</html>
