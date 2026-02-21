@@ -1,1 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Attention Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<div class="card">
+<h1>Attention Game 👁️</h1>
+
+<p>Click the button ONLY when it turns green.</p>
+
+<button id="btn" onclick="clickBtn()">Waiting...</button>
+</div>
+
+<script>
+
+let startTime;
+let waiting=false;
+
+const btn=document.getElementById("btn");
+
+function startRound(){
+ btn.innerText="Wait...";
+ waiting=true;
+
+ setTimeout(()=>{
+   btn.style.background="#2ecc71";
+   btn.innerText="CLICK!";
+   startTime=performance.now();
+ },Math.random()*3000+2000);
+}
+
+function clickBtn(){
+ if(!waiting) return;
+
+ let reaction=performance.now()-startTime;
+
+ alert("Reaction: "+Math.floor(reaction)+" ms");
+
+ btn.style.background="#e94560";
+ waiting=false;
+
+ setTimeout(startRound,1500);
+}
+
+startRound();
+
+</script>
+
+</body>
+</html>
