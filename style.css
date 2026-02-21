@@ -1,52 +1,93 @@
 body{
  margin:0;
  font-family:system-ui,sans-serif;
- background:linear-gradient(135deg,#1b1b2f,#162447);
+ background:linear-gradient(135deg,#020617,#0f172a);
  color:white;
- text-align:center;
 }
+
+/* NAV BAR */
 
 .nav{
  position:fixed;
  top:0;
  width:100%;
- background:#0b1d3a;
- padding:15px;
+ background:rgba(2,6,23,.8);
+ backdrop-filter:blur(20px);
+ padding:18px;
  display:flex;
  justify-content:center;
- gap:30px;
+ gap:40px;
+ z-index:1000;
 }
 
 .nav a{
  color:white;
  text-decoration:none;
- font-weight:bold;
+ font-weight:600;
+ transition:.3s;
 }
+
+.nav a:hover{
+ color:#38bdf8;
+}
+
+/* GLASS CARD */
 
 .card{
- background:#0f3460;
- width:600px;
- margin:120px auto;
- padding:40px;
- border-radius:16px;
- box-shadow:0 20px 40px rgba(0,0,0,.4);
+ width:900px;
+ max-width:92%;
+ margin:140px auto;
+ padding:50px;
+
+ border-radius:25px;
+
+ background:rgba(255,255,255,0.04);
+ backdrop-filter:blur(25px);
+
+ box-shadow:
+ 0 40px 80px rgba(0,0,0,.6);
 }
+
+/* BUTTONS */
 
 button{
- background:#e94560;
- color:white;
+ background:linear-gradient(90deg,#e94560,#ff758c);
  border:none;
- padding:14px 30px;
- border-radius:10px;
+ padding:15px 32px;
+ border-radius:14px;
+ color:white;
  font-size:18px;
  cursor:pointer;
+ transition:.3s;
 }
 
+button:hover{
+ transform:translateY(-3px);
+ box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+
+/* INPUT */
+
 input{
- font-size:20px;
- padding:10px;
- border-radius:8px;
+ padding:14px;
+ border-radius:12px;
  border:none;
+ font-size:18px;
  width:80%;
  text-align:center;
+}
+
+/* DASHBOARD CARDS */
+
+.metric-grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+ gap:25px;
+ margin-top:30px;
+}
+
+.metric{
+ padding:25px;
+ border-radius:16px;
+ background:rgba(255,255,255,0.05);
 }
