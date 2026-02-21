@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Visual Memory Training</title>
+<title>Hard Visual Memory Training</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
@@ -9,20 +9,20 @@
 .grid{
  display:grid;
  grid-template-columns:repeat(4,1fr);
- gap:15px;
+ gap:18px;
  margin:20px 0;
 }
 
 .cell{
- height:80px;
+ height:90px;
  background:#1abc9c;
- border-radius:12px;
- font-size:30px;
+ border-radius:14px;
+ font-size:32px;
  display:flex;
  align-items:center;
  justify-content:center;
  cursor:pointer;
- transition:.2s;
+ transition:.25s;
 }
 
 .cell.selected{
@@ -48,8 +48,8 @@
 
 <div id="game"></div>
 
-<button id="startBtn" onclick="startRound()">
-Start Round
+<button id="startBtn" onclick="startTrial()">
+Start Trial
 </button>
 
 </div>
@@ -57,80 +57,81 @@ Start Round
 <script>
 
 let ndi=Number(localStorage.getItem("ndiScore"))||50;
-
 let round=0;
 
-let originalScene=[];
-let newScene=[];
+let originalObjects=[];
+let trialObjects=[];
 let addedIndices=[];
-let userSelections=new Set();
+let selections=new Set();
 
 const symbols=[
 "🐶","🐱","🦊","🦁","🐸","🐵","🐼","🐨",
-"🍎","🍌","🍓","🍇","⚽","🏀","🎲","🎯"
+"🍎","🍌","🍓","🍇","⚽","🏀","🎲","🎯",
+"🚗","✈️","🚀","🏆"
 ];
 
-function getDifficultySize(){
+function getDifficulty(){
 
  if(ndi<40) return 6 + Math.floor(round/2);
- if(ndi<70) return 8 + Math.floor(round/2);
- return 10 + Math.floor(round/1.5);
+ if(ndi<70) return 8 + Math.floor(round/1.8);
+ return 12 + Math.floor(round/1.5);
 
 }
 
-function startRound(){
+function startTrial(){
 
  document.getElementById("startBtn").style.display="none";
 
- let size=getDifficultySize();
+ let size=getDifficulty();
 
- // Generate random scene
- originalScene=Array.from({length:size},()=>randomSymbol());
+ // Generate original memory scene
+ originalObjects=Array.from(
+  {length:size},
+  ()=>randomSymbol()
+ );
 
- // Copy scene then add new objects
- newScene=[...originalScene];
+ showScene(originalObjects,"Memorize the scene");
+
+ // After delay → show scrambled new scene with added items
+ setTimeout(()=>{
+   generateTestScene();
+ },3000);
+
+}
+
+function generateTestScene(){
+
+ let size=originalObjects.length;
+
+ // Copy and add new objects
+ trialObjects=[...originalObjects];
 
  let addCount=2;
 
  addedIndices=[];
 
- while(addedIndices.length<addCount){
-
-   let pos=Math.floor(Math.random()*newScene.length);
+ for(let i=0;i<addCount;i++){
+   let pos=Math.floor(Math.random()*size);
 
    if(!addedIndices.includes(pos)){
-     newScene[pos]=randomSymbolDifferent(originalScene[pos]);
+     trialObjects[pos]=randomSymbolDifferent(trialObjects[pos]);
      addedIndices.push(pos);
    }
-
  }
 
- showScene(originalScene,"Memorize this scene");
+ // SHUFFLE ENTIRE ARRAY (critical improvement)
+ shuffleArray(trialObjects);
 
- setTimeout(()=>{
-   showScene(newScene,"Select NEW objects",true);
- },3000);
+ showScene(trialObjects,"Select the NEW objects",true);
 
 }
 
-function randomSymbol(){
- return symbols[Math.floor(Math.random()*symbols.length)];
-}
-
-function randomSymbolDifferent(old){
- let s=randomSymbol();
- while(s===old){
-   s=randomSymbol();
- }
- return s;
-}
-
-function showScene(scene,message,interactive=false){
+function showScene(list,message,interactive=false){
 
  let html=`<h3>${message}</h3>`;
  html+=`<div class="grid">`;
 
- scene.forEach((item,index)=>{
+ list.forEach((item,index)=>{
 
    html+=`
    <div class="cell"
@@ -152,8 +153,7 @@ function showScene(scene,message,interactive=false){
  }
 
  document.getElementById("game").innerHTML=html;
-
- userSelections=new Set();
+ selections=new Set();
 
 }
 
@@ -161,10 +161,10 @@ function toggleSelect(index,el){
 
  if(el.classList.contains("selected")){
    el.classList.remove("selected");
-   userSelections.delete(index);
+   selections.delete(index);
  }else{
    el.classList.add("selected");
-   userSelections.add(index);
+   selections.add(index);
  }
 
 }
@@ -174,7 +174,7 @@ function checkAnswers(){
  let correct=0;
 
  addedIndices.forEach(i=>{
-   if(userSelections.has(i)) correct++;
+   if(selections.has(i)) correct++;
  });
 
  alert(
@@ -188,6 +188,25 @@ function checkAnswers(){
  document.getElementById("startBtn").style.display="inline-block";
  document.getElementById("game").innerHTML="";
 
+}
+
+function randomSymbol(){
+ return symbols[Math.floor(Math.random()*symbols.length)];
+}
+
+function randomSymbolDifferent(old){
+ let s=randomSymbol();
+ while(s===old){
+   s=randomSymbol();
+ }
+ return s;
+}
+
+function shuffleArray(arr){
+ for(let i=arr.length-1;i>0;i--){
+   let j=Math.floor(Math.random()*(i+1));
+   [arr[i],arr[j]]=[arr[j],arr[i]];
+ }
 }
 
 </script>
