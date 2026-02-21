@@ -1,55 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Memory Game</title>
+<title>Memory Training</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<div class="nav">
+<a href="index.html">Home Test</a>
+<a href="memory-game.html">Memory</a>
+<a href="attention-game.html">Attention</a>
+<a href="processing-game.html">Processing</a>
+<a href="logic-game.html">Logic</a>
+</div>
+
 <div class="card">
-<h1>Memory Game 🧠</h1>
-<p>Memorize the sequence of numbers.</p>
-
+<h1>Memory Training 🧠</h1>
 <div id="game"></div>
-
-<button onclick="startGame()">Start Game</button>
 </div>
 
 <script>
 
+let ndi=Number(localStorage.getItem("ndiScore"))||50;
+
 let sequence;
 
-function startGame(){
- sequence = Array.from(
-   {length:4},
-   ()=>Math.floor(Math.random()*9)
- );
+function startRound(){
 
- document.getElementById("game").innerHTML =
- "<h2>"+sequence.join(" ")+"</h2>";
+ let base = ndi<40?3: ndi<70?4:6;
+ let length = base + Math.floor(Math.random()*3);
 
- setTimeout(()=>{
-   document.getElementById("game").innerHTML = `
-   <input id="answer">
-   <button onclick="check()">Submit</button>
-   `;
- },3000);
+ sequence=Array.from({length},
+ ()=>Math.floor(Math.random()*9));
+
+ document.getElementById("game").innerHTML=
+ `<h2>${sequence.join(" ")}</h2>`;
+
+ setTimeout(showInput,3000);
+}
+
+function showInput(){
+
+ document.getElementById("game").innerHTML=`
+ <p>Enter sequence</p>
+ <input id="ans">
+ <br><br>
+ <button onclick="check()">Submit</button>
+ `;
+
 }
 
 function check(){
- let input = document.getElementById("answer").value
-   .split("")
-   .map(Number);
 
- let correct = 0;
+ let input=document.getElementById("ans").value.split("").map(Number);
+
+ let correct=0;
 
  for(let i=0;i<sequence.length;i++){
-   if(sequence[i]===input[i]) correct++;
+  if(sequence[i]==input[i]) correct++;
  }
 
  alert("Score: "+correct+"/"+sequence.length);
+
+ startRound();
+
 }
+
+startRound();
 
 </script>
 
