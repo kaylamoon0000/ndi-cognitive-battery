@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="nav">
+<a href="index.html">Home</a>
+<a href="dashboard.html">Dashboard</a>
+</div>
+
+<div class="card">
+
+<h1>Performance Dashboard</h1>
+
+<div class="metric-grid">
+
+<div class="metric">
+<h3>NDI Score</h3>
+<p id="ndi"></p>
+</div>
+
+<div class="metric">
+<h3>XP Level</h3>
+<p id="xp"></p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+document.getElementById("ndi").innerText =
+(Number(localStorage.getItem("ndiScore"))||0).toFixed(1);
+
+document.getElementById("xp").innerText =
+localStorage.getItem("xp")||0;
+
+</script>
+
+</body>
+</html>
