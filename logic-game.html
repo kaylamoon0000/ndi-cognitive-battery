@@ -8,16 +8,12 @@
 
 <style>
 
-/* GLOBAL BACKGROUND */
-
 body{
  margin:0;
  font-family:system-ui,sans-serif;
  background:linear-gradient(135deg,#0f172a,#020617);
  color:white;
 }
-
-/* NAVBAR */
 
 .navbar{
  position:fixed;
@@ -38,8 +34,6 @@ body{
  font-weight:600;
 }
 
-/* CARD */
-
 .card{
  width:700px;
  max-width:90%;
@@ -51,8 +45,6 @@ body{
  text-align:center;
  box-shadow:0 40px 80px rgba(0,0,0,.6);
 }
-
-/* INPUT */
 
 input{
  padding:14px;
@@ -66,7 +58,6 @@ input{
 }
 
 button{
- margin-top:20px;
  padding:14px 32px;
  border:none;
  border-radius:12px;
@@ -105,9 +96,13 @@ button{
 
 <h1>🧠 Logic Training</h1>
 
-<div id="game"></div>
+<div id="gameArea">
 
-<button onclick="startRound()">Start Round</button>
+<button onclick="showStartScreen()">
+Start Logic Test
+</button>
+
+</div>
 
 </div>
 
@@ -117,12 +112,11 @@ button{
    LOGIC GAME LOGIC
 =============================== */
 
-const game=document.getElementById("game");
+const gameArea=document.getElementById("gameArea");
 
-let round=0;
 let currentAnswer=0;
 
-/* QUESTION BANK */
+/* QUESTION GENERATOR */
 
 function generateQuestion(){
 
@@ -134,23 +128,18 @@ function generateQuestion(){
 
  if(type===0){
 
-  // ADDITION LOGIC
   currentAnswer=a+b+c;
-
   return `${a} + ${b} + ${c} = ?`;
 
  }
 
  if(type===1){
 
-  // MULTIPLICATION LOGIC
   currentAnswer=a*b + c;
-
   return `${a} × ${b} + ${c} = ?`;
 
  }
 
- // SEQUENCE LOGIC
  let seq=[a,a+c,a+2*c,a+3*c];
  currentAnswer=seq[3];
 
@@ -158,19 +147,32 @@ function generateQuestion(){
 
 }
 
-/* GAME FLOW */
+/* START SCREEN */
 
-function startRound(){
+function showStartScreen(){
+
+ gameArea.innerHTML=`
+ <h2>Press Start When Ready</h2>
+ <button onclick="startLogicRound()">
+ Start Test
+ </button>
+ `;
+
+}
+
+/* GAME ROUND */
+
+function startLogicRound(){
 
  let question=generateQuestion();
 
- game.innerHTML=`
+ gameArea.innerHTML=`
  <div class="big">${question}</div>
 
  <input id="ans" placeholder="Enter answer">
 
- <button onclick="checkAnswer()">
- Submit
+ <button onclick="checkLogicAnswer()">
+ Submit Answer
  </button>
  `;
 
@@ -178,7 +180,7 @@ function startRound(){
 
 /* CHECK ANSWER */
 
-function checkAnswer(){
+function checkLogicAnswer(){
 
  let userAns=parseInt(
  document.getElementById("ans").value
@@ -191,15 +193,17 @@ function checkAnswer(){
  alert("Wrong! Correct answer: "+currentAnswer);
  }
 
- round++;
-
- game.innerHTML="";
+ gameArea.innerHTML=`
+ <button onclick="startLogicRound()">
+ Next Question
+ </button>
+ `;
 
 }
 
-/* START FIRST ROUND */
+/* INITIAL SCREEN */
 
-startRound();
+showStartScreen();
 
 </script>
 
