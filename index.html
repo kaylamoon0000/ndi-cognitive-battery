@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <title>Neuro Cognitive Performance Platform</title>
+
 <script src="auth.js"></script>
- 
+
 <link rel="stylesheet" href="style.css">
 
 <style>
@@ -39,6 +40,13 @@ body{
  text-decoration:none;
  font-weight:600;
  font-size:15px;
+}
+
+/* Auth button styling */
+#authToggle{
+ padding:6px 14px;
+ border-radius:8px;
+ background:rgba(255,255,255,.08);
 }
 
 /* ================= HERO ================= */
@@ -97,15 +105,11 @@ body{
  margin-bottom:30px;
 }
 
-/* ================= GRID FIX ================= */
-
 .grid{
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
- gap:22px; /* reduced vertical + horizontal gap */
+ gap:22px;
 }
-
-/* Make cards equal height */
 
 .card{
  padding:26px;
@@ -114,8 +118,7 @@ body{
 
  display:flex;
  flex-direction:column;
- justify-content:flex-start;
- min-height:190px; /* keeps alignment consistent */
+ min-height:190px;
 }
 
 .card h3{
@@ -136,10 +139,11 @@ footer{
 </head>
 
 <body>
- 
+
 <!-- NAVBAR -->
 
 <div class="navbar">
+
 <a href="index.html">Home</a>
 <a href="test.html">Assessment</a>
 <a href="memory-game.html">Memory</a>
@@ -147,6 +151,9 @@ footer{
 <a href="processing-game.html">Processing</a>
 <a href="logic-game.html">Logic</a>
 <a href="dashboard.html">Dashboard</a>
+
+<a href="#" id="authToggle"></a>
+
 </div>
 
 <!-- HERO -->
@@ -242,6 +249,10 @@ Performance trends are tracked longitudinally to help users understand baseline 
 <footer>
 Neurocognitive Performance Platform © 2026
 </footer>
+
+<script>
+requireLogin();
+</script>
 
 </body>
 </html>
