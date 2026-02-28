@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Sign Up</title>
-
+<title>Create Account</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
+
 body{
  display:flex;
  justify-content:center;
@@ -37,10 +37,10 @@ input{
 </head>
 
 <body>
- 
+
 <div class="card">
 
-<h1>Create Account</h1>
+<h1>Sign Up</h1>
 
 <input id="username" placeholder="Username">
 <br>
@@ -55,6 +55,8 @@ Already have account?
 </p>
 
 </div>
+
+<script src="auth.js"></script>
 
 <script>
 
@@ -71,7 +73,7 @@ function signup(){
  let users=JSON.parse(localStorage.getItem("users")||"{}");
 
  if(users[username]){
-  alert("User already exists");
+  alert("User exists");
   return;
  }
 
