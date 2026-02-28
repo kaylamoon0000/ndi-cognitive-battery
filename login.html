@@ -2,7 +2,6 @@
 <html>
 <head>
 <title>Login</title>
-
 <link rel="stylesheet" href="style.css">
 
 <style>
@@ -33,6 +32,16 @@ input{
  text-align:center;
 }
 
+.googleBtn{
+ background:white;
+ color:black;
+ padding:14px;
+ border-radius:12px;
+ border:none;
+ cursor:pointer;
+ font-weight:bold;
+}
+
 </style>
 
 </head>
@@ -50,12 +59,20 @@ input{
 
 <button onclick="login()">Login</button>
 
+<br><br>
+
+<button class="googleBtn" onclick="googleLogin()">
+🔵 Continue with Google
+</button>
+
 <p>
 Need account?
 <a href="signup.html">Sign Up</a>
 </p>
 
 </div>
+
+<script src="auth.js"></script>
 
 <script>
 
@@ -68,14 +85,26 @@ function login(){
 
  if(users[username] && users[username]===password){
 
-  localStorage.setItem("currentUser",username);
-
+  loginUser(username);
   window.location.href="index.html";
 
  }else{
-  alert("Invalid credentials");
+  alert("Invalid login");
  }
 
+}
+
+/* Fake Google Button (Redirect Simulation) */
+
+function googleLogin(){
+
+ let fakeGoogleUser="GoogleUser_"+Math.floor(Math.random()*1000);
+
+ loginUser(fakeGoogleUser);
+
+ alert("Logged in via Google (simulated)");
+
+ window.location.href="index.html";
 }
 
 </script>
