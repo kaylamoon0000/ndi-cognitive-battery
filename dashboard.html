@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Performance Dashboard</title>
+
 <script src="auth.js"></script>
 
 <link rel="stylesheet" href="style.css">
@@ -16,18 +17,18 @@ body{
  color:white;
 }
 
-/* NAVBAR */
+/* ================= NAVBAR ================= */
 
 .navbar{
  position:fixed;
  top:0;
  width:100%;
- padding:18px;
+ padding:16px;
  background:rgba(2,6,23,.9);
  backdrop-filter:blur(20px);
  display:flex;
  justify-content:center;
- gap:30px;
+ gap:28px;
  z-index:1000;
 }
 
@@ -35,9 +36,16 @@ body{
  color:white;
  text-decoration:none;
  font-weight:600;
+ font-size:15px;
 }
 
-/* CARD */
+#authToggle{
+ padding:6px 14px;
+ border-radius:8px;
+ background:rgba(255,255,255,.08);
+}
+
+/* ================= CARD ================= */
 
 .card{
  width:800px;
@@ -45,13 +53,16 @@ body{
  margin:140px auto;
  padding:50px;
  border-radius:24px;
+
  background:rgba(255,255,255,.05);
  backdrop-filter:blur(30px);
+
  text-align:center;
+
  box-shadow:0 40px 80px rgba(0,0,0,.6);
 }
 
-/* METRIC GRID */
+/* ================= METRICS ================= */
 
 .metricGrid{
  display:grid;
@@ -64,6 +75,11 @@ body{
  padding:25px;
  border-radius:16px;
  background:rgba(255,255,255,.05);
+ transition:.3s;
+}
+
+.metricBox:hover{
+ transform:translateY(-5px);
 }
 
 .metricValue{
@@ -71,18 +87,28 @@ body{
  font-weight:bold;
 }
 
+/* SMALL SUBTEXT */
+
+.sub{
+ opacity:.7;
+ font-size:14px;
+ margin-top:8px;
+}
+
 </style>
 
 </head>
 
 <body>
+
 <script>
 requireLogin();
 </script>
- 
+
 <!-- NAVBAR -->
 
 <div class="navbar">
+
 <a href="index.html">Home</a>
 <a href="test.html">Assessment</a>
 <a href="memory-game.html">Memory</a>
@@ -90,6 +116,9 @@ requireLogin();
 <a href="processing-game.html">Processing</a>
 <a href="logic-game.html">Logic</a>
 <a href="dashboard.html">Dashboard</a>
+
+<a href="#" id="authToggle"></a>
+
 </div>
 
 <!-- DASHBOARD CARD -->
@@ -98,26 +127,34 @@ requireLogin();
 
 <h1>📊 Performance Dashboard</h1>
 
+<p class="sub">
+Track your cognitive performance trends across sessions
+</p>
+
 <div class="metricGrid">
 
 <div class="metricBox">
 <h3>🧠 Neurocognitive Index</h3>
 <div class="metricValue" id="ndi">0</div>
+<div class="sub">Composite cognitive health score</div>
 </div>
 
 <div class="metricBox">
 <h3>⚡ XP Level</h3>
 <div class="metricValue" id="xp">0</div>
+<div class="sub">Training progression metric</div>
 </div>
 
 <div class="metricBox">
-<h3>📈 Average Reaction Time</h3>
+<h3>📈 Reaction Time</h3>
 <div class="metricValue" id="rt">0 ms</div>
+<div class="sub">Average response latency</div>
 </div>
 
 <div class="metricBox">
 <h3>🧩 Memory Accuracy</h3>
 <div class="metricValue" id="mem">0%</div>
+<div class="sub">Working memory performance</div>
 </div>
 
 </div>
@@ -127,7 +164,7 @@ requireLogin();
 <script>
 
 /* ===============================
-   LOAD DATA FROM LOCAL STORAGE
+   LOAD DATA
 =============================== */
 
 let ndi=localStorage.getItem("ndiScore")||0;
