@@ -11,7 +11,7 @@
 
 body{
  margin:0;
- font-family:system-ui;
+ font-family:system-ui,sans-serif;
  background:linear-gradient(135deg,#0f172a,#020617);
  color:white;
 }
@@ -38,12 +38,6 @@ body{
  font-size:15px;
 }
 
-#authToggle{
- padding:6px 14px;
- border-radius:8px;
- background:rgba(255,255,255,.08);
-}
-
 /* CARD */
 
 .card{
@@ -61,7 +55,7 @@ body{
  box-shadow:0 40px 80px rgba(0,0,0,.6);
 }
 
-/* GAME GRID */
+/* GRID */
 
 .grid{
  display:grid;
@@ -87,6 +81,8 @@ body{
 .cell.selected{
  background:#e94560;
 }
+
+/* BUTTONS */
 
 button{
  margin-top:20px;
@@ -128,28 +124,20 @@ requireLogin();
 <a href="logic-game.html">Logic</a>
 <a href="dashboard.html">Dashboard</a>
 
-<a href="#" id="authToggle"></a>
-
 </div>
 
 <!-- GAME CARD -->
 
 <div class="card">
 
-<h1>🧠 Visual Memory Training</h1>
-
 <div id="game"></div>
-
-<button onclick="showStartScreen()">
-Start Round
-</button>
 
 </div>
 
 <script>
 
 /* ===============================
-   MEMORY GAME LOGIC
+   MEMORY GAME
 =============================== */
 
 const game=document.getElementById("game");
@@ -196,14 +184,21 @@ function randomSymbolDifferent(old){
 function showStartScreen(){
 
  game.innerHTML=`
- <h2>Memorize the scene</h2>
- <p>Round ${round+1}</p>
- <button onclick="startRound()">Begin Round</button>
+ <h1>🧠 Visual Memory Training</h1>
+
+ <p>
+ Memorize the objects shown.<br>
+ Then select the changed objects.
+ </p>
+
+ <button onclick="startRound()">
+ Begin Memory Round
+ </button>
  `;
 
 }
 
-/* GAME FLOW */
+/* ROUND START */
 
 function startRound(){
 
@@ -222,7 +217,7 @@ function startRound(){
 
 }
 
-/* SHOW MEMORY SCENE */
+/* MEMORY DISPLAY */
 
 function showScene(list,message){
 
@@ -245,7 +240,6 @@ function generateTestScene(){
  let size=originalScene.length;
 
  testScene=[...originalScene];
-
  changedIndices=[];
 
  let changeCount=2+Math.floor(round/3);
@@ -273,22 +267,22 @@ function showInteractiveScene(changeCount){
 
  let html=`
  <h2>Select the ${changeCount} new objects</h2>
+
  <div class="grid">
  `;
 
  testScene.forEach((symbol,index)=>{
-
   html+=`
   <div class="cell"
   onclick="toggleSelect(${index},this)">
   ${symbol}
   </div>
   `;
-
  });
 
  html+=`
  </div>
+
  <button onclick="checkAnswers()">
  Submit Answers
  </button>
@@ -323,28 +317,28 @@ function checkAnswers(){
   if(selections.has(i)) correct++;
  });
 
+ localStorage.setItem(
+  "avgMemory",
+  correct/changedIndices.length
+ );
+
  alert(
  "You found "+correct+
  " / "+changedIndices.length+
  " changes"
  );
 
- localStorage.setItem(
- "avgMemory",
- correct/changedIndices.length
- );
-
  round++;
 
  game.innerHTML=`
- <button onclick="showStartScreen()">
+ <button onclick="startRound()">
  Next Round
  </button>
  `;
 
 }
 
-/* INITIAL SCREEN */
+/* INIT */
 
 showStartScreen();
 
